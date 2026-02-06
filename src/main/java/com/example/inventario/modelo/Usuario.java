@@ -1,6 +1,8 @@
 package com.example.inventario.modelo;
 
 import jakarta.persistence.*;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @Table(name = "tb_usuarios")
@@ -16,9 +18,9 @@ public class Usuario {
     private String nombre;
     private String apellido;
 
-    @ManyToOne
-    @JoinColumn(name = "id_rol")
-    private Rol rol;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tb_usuario_roles", joinColumns = @JoinColumn(name = "id_user"), inverseJoinColumns = @JoinColumn(name = "id_rol"))
+    private Set<Rol> roles = new HashSet<>();
 
     @Column(name = "estado_usuario")
     private Integer estadoUsuario;
@@ -26,14 +28,14 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(Integer idUser, String username, String password, String nombre, String apellido, Rol rol,
+    public Usuario(Integer idUser, String username, String password, String nombre, String apellido, Set<Rol> roles,
             Integer estadoUsuario) {
         this.idUser = idUser;
         this.username = username;
         this.password = password;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.rol = rol;
+        this.roles = roles;
         this.estadoUsuario = estadoUsuario;
     }
 
@@ -77,12 +79,12 @@ public class Usuario {
         this.apellido = apellido;
     }
 
-    public Rol getRol() {
-        return rol;
+    public Set<Rol> getRoles() {
+        return roles;
     }
 
-    public void setRol(Rol rol) {
-        this.rol = rol;
+    public void setRoles(Set<Rol> roles) {
+        this.roles = roles;
     }
 
     public Integer getEstadoUsuario() {
