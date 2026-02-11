@@ -26,23 +26,23 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        // USUARIOS
+                        // TABLA DE USUARIOS
                         // Creación: Solo ADMIN
                         .requestMatchers(HttpMethod.POST, "/usuarios/**").hasRole("ADMINISTRADOR")
                         // Modificación/Eliminación: ADMIN y USER
                         .requestMatchers(HttpMethod.PUT, "/usuarios/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
-                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
-                        // Lectura Usuarios: ADMIN, USER y AUDITOR (Operador excluido si es estricto,
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").hasAnyRole("ADMINISTRADOR")
+                        // Lectura Usuarios: ADMIN, USER y VISOR (Operador excluido si es estricto,
                         // pero si necesita ver perfil...)
-                        // Vamos a alinearnos con "Auditor solo lectura" (ve todo) y "Operador solo
+                        // Vamos a alinearnos con "VISOR solo lectura" (ve todo) y "Operador solo
                         // movimientos" (ve lo necesario)
                         .requestMatchers(HttpMethod.GET, "/usuarios/**")
-                        .hasAnyRole("ADMINISTRADOR", "USUARIO", "AUDITOR")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO")
 
-                        // TRANSACCIONES (Movimientos)
-                        // Lectura: Todos (incluido OPERADOR y AUDITOR)
+                        // TABLA DE TRANSACCIONES
+                        // Lectura: Todos (incluido OPERADOR y VISOR)
                         .requestMatchers(HttpMethod.GET, "/transacciones/**")
-                        .hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR", "AUDITOR")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR", "VISOR")
                         // Escritura: ADMIN, USER, OPERADOR
                         .requestMatchers(HttpMethod.POST, "/transacciones/**")
                         .hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR")
@@ -51,14 +51,24 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/transacciones/**")
                         .hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR")
 
-                        // RESTO DEL SISTEMA (Productos, Categorias, etc)
-                        // Lectura global: Todos
+                        // TABLA DE ACTIVIDADES
+                        .requestMatchers(HttpMethod.GET, "/actividades/**")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO")
+                        .requestMatchers(HttpMethod.POST, "/actividades/**")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO")
+                        .requestMatchers(HttpMethod.PUT, "/actividades/**")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO")
+                        .requestMatchers(HttpMethod.DELETE, "/actividades/**")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO")
+
+                        // RESTO DEL SISTEMA (Tabla de Productos, Tabla de Categorias, etc)
+                        // Lectura global: Todas las tablas
                         .requestMatchers(HttpMethod.GET, "/**")
-                        .hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR", "AUDITOR")
+                        .hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR", "VISOR")
                         // Escritura global: Solo ADMIN y USER
-                        .requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
-                        .requestMatchers(HttpMethod.PUT, "/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
-                        .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("ADMINISTRADOR", "USUARIO")
+                        .requestMatchers(HttpMethod.POST, "/**").hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/**").hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/**").hasAnyRole("ADMINISTRADOR", "USUARIO", "OPERADOR")
 
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
