@@ -1,0 +1,6 @@
+ROLES DE USUARIO PARA EL SISTEMA
+
+1. Administrador = Tiene acceso para todo el sistema
+2. Usuario = Tiene acceso para todo el sistema excepto para la creación y eliminacion de usuarios
+3. Operador = Tiene acceso para todo el sistema excepto para las tablas de Usuario y Actividades
+4. Visor = Solo lectura para las siguientes tablas: Producto, Categoria, Marca, Proveedor, Area y Transacciones
