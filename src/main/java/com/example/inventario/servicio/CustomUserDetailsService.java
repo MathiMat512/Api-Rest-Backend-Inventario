@@ -22,9 +22,7 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findAll().stream()
-                .filter(u -> u.getUsername().equals(username))
-                .findFirst()
+        Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
         List<GrantedAuthority> authorities = usuario.getRoles().stream()
