@@ -26,7 +26,13 @@ public class UsuarioService {
         return usuarioRepository.save(usuario);
     }
 
-    public void eliminarUsuario(Long id) {
-        usuarioRepository.deleteById(id);
+    public boolean eliminarUsuario(Long id) {
+        Optional<Usuario> usuario = usuarioRepository.findById(id);
+        if (usuario.isPresent()) {
+            usuario.get().setEstadoUsuario(0);
+            usuarioRepository.save(usuario.get());
+            return true;
+        }
+        return false;
     }
 }

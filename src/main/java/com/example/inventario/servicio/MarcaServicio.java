@@ -26,7 +26,13 @@ public class MarcaServicio {
         return marcaRepositorio.save(marca);
     }
 
-    public void eliminarMarca(Long id) {
-        marcaRepositorio.deleteById(id);
+    public boolean eliminarMarca(Long id) {
+        Optional<Marca> marca = marcaRepositorio.findById(id);
+        if (marca.isPresent()) {
+            marca.get().setEstadoMarca(0);
+            marcaRepositorio.save(marca.get());
+            return true;
+        }
+        return false;
     }
 }

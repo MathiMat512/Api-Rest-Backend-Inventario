@@ -26,7 +26,13 @@ public class ProveedorService {
         return proveedorRepository.save(proveedor);
     }
 
-    public void eliminarProveedor(Long id) {
-        proveedorRepository.deleteById(id);
+    public boolean eliminarProveedor(Long id) {
+        Optional<Proveedor> proveedor = proveedorRepository.findById(id);
+        if (proveedor.isPresent()) {
+            proveedor.get().setEstadoProveedor(0);
+            proveedorRepository.save(proveedor.get());
+            return true;
+        }
+        return false;
     }
 }

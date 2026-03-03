@@ -70,6 +70,24 @@ public class SecurityConfig {
                         .requestMatchers("/areas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
                         .requestMatchers("/transacciones/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
 
+                        // Eliminacion de tablas: ADMIN, USUARIO y OPERADOR (VISOR excluido)
+                        .requestMatchers(HttpMethod.DELETE, "/productos/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/marcas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/proveedores/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/areas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/transacciones/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+
+                        // Edicion en tablas: ADMIN, USUARIO y OPERADOR (VISOR excluido)
+                        .requestMatchers(HttpMethod.PUT, "/productos/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/categorias/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/marcas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/proveedores/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/areas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/transacciones/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
