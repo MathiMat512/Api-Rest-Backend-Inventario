@@ -1,0 +1,22 @@
+# Build outputs
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iws
+*.iml
+*.ipr
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docs
+*.md
+*.txt
+
+# Docker
+Dockerfile
+.dockerignore
