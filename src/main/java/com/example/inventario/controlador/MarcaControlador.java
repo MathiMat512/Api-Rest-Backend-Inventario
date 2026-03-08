@@ -57,8 +57,7 @@ public class MarcaControlador {
     // 🔹 Eliminar marca
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarMarca(@PathVariable Integer id) {
-        if (marcaServicio.obtenerPorId(Long.valueOf(id)).isPresent()) {
-            marcaServicio.eliminarMarca(Long.valueOf(id));
+        if (marcaServicio.eliminarMarca(Long.valueOf(id))) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

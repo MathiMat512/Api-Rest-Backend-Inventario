@@ -46,8 +46,7 @@ public class AreaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarArea(@PathVariable Integer id) {
-        if (areaService.obtenerPorId(Long.valueOf(id)).isPresent()) {
-            areaService.eliminarArea(Long.valueOf(id));
+        if (areaService.eliminarArea(Long.valueOf(id))) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

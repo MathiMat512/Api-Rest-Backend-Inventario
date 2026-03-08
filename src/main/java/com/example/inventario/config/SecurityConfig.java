@@ -34,9 +34,60 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Rutas públicas
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
-                        .requestMatchers("/usuarios/**").hasRole("ADMINISTRADOR")
+
+                        // USUARIOS: ADMIN acceso total, USUARIO solo lectura
+                        .requestMatchers(HttpMethod.GET, "/usuarios/**").hasAnyRole("ADMIN", "USUARIO")
+                        .requestMatchers("/usuarios/**").hasRole("ADMIN")
+
+                        // ACTIVIDADES: solo ADMIN y USUARIO
+                        .requestMatchers("/actividades/**").hasAnyRole("ADMIN", "USUARIO")
+
+                        // ROLES: solo ADMIN
+                        .requestMatchers("/roles/**").hasRole("ADMIN")
+
+                        // Lectura de tablas: ADMIN, USUARIO, OPERADOR y VISOR
+                        .requestMatchers(HttpMethod.GET, "/productos/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR", "VISOR")
+                        .requestMatchers(HttpMethod.GET, "/categorias/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR", "VISOR")
+                        .requestMatchers(HttpMethod.GET, "/marcas/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR", "VISOR")
+                        .requestMatchers(HttpMethod.GET, "/proveedores/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR", "VISOR")
+                        .requestMatchers(HttpMethod.GET, "/areas/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR", "VISOR")
+                        .requestMatchers(HttpMethod.GET, "/transacciones/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR", "VISOR")
+
+                        // Escritura en tablas: ADMIN, USUARIO y OPERADOR (VISOR excluido)
+                        .requestMatchers("/productos/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers("/categorias/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers("/marcas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers("/proveedores/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers("/areas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers("/transacciones/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+
+                        // Eliminacion de tablas: ADMIN, USUARIO y OPERADOR (VISOR excluido)
+                        .requestMatchers(HttpMethod.DELETE, "/productos/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/marcas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/proveedores/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/areas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.DELETE, "/transacciones/**")
+                        .hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+
+                        // Edicion en tablas: ADMIN, USUARIO y OPERADOR (VISOR excluido)
+                        .requestMatchers(HttpMethod.PUT, "/productos/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/categorias/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/marcas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/proveedores/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/areas/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+                        .requestMatchers(HttpMethod.PUT, "/transacciones/**").hasAnyRole("ADMIN", "USUARIO", "OPERADOR")
+
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

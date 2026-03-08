@@ -26,7 +26,13 @@ public class AreaService {
         return areaRepository.save(area);
     }
 
-    public void eliminarArea(Long id) {
-        areaRepository.deleteById(id);
+    public boolean eliminarArea(Long id) {
+        Optional<Area> area = areaRepository.findById(id);
+        if (area.isPresent()) {
+            area.get().setEstadoArea(0);
+            areaRepository.save(area.get());
+            return true;
+        }
+        return false;
     }
 }

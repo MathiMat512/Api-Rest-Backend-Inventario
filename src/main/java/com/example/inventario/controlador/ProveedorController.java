@@ -57,8 +57,7 @@ public class ProveedorController {
     // 🔹 Eliminar proveedor
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProveedor(@PathVariable Integer id) {
-        if (proveedorService.obtenerPorId(Long.valueOf(id)).isPresent()) {
-            proveedorService.eliminarProveedor(Long.valueOf(id));
+        if (proveedorService.eliminarProveedor(Long.valueOf(id))) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();

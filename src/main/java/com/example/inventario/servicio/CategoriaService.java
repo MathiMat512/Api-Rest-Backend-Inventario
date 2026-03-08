@@ -26,7 +26,13 @@ public class CategoriaService {
         return categoriaRepository.save(categoria);
     }
 
-    public void eliminarCategoria(Long id) {
-        categoriaRepository.deleteById(id);
+    public boolean eliminarCategoria(Long id) {
+        Optional<Categoria> categoria = categoriaRepository.findById(id);
+        if (categoria.isPresent()) {
+            categoria.get().setEstadoCategoria(0);
+            categoriaRepository.save(categoria.get());
+            return true;
+        }
+        return false;
     }
 }
