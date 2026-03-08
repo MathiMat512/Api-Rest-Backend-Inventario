@@ -26,7 +26,14 @@ public class CustomUserDetailsService implements UserDetailsService, UserDetails
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
         List<GrantedAuthority> authorities = usuario.getRoles().stream()
-                .map(rol -> new SimpleGrantedAuthority("ROLE_" + rol.getDescripcionRol().toUpperCase()))
+                .map(rol -> {
+                    String roleName = rol.getDescripcionRol().toUpperCase();
+                    // Si el rol ya tiene prefijo ROLE_, usarlo tal cual
+                    if (!roleName.startsWith("ROLE_")) {
+                        roleName = "ROLE_" + roleName;
+                    }
+                    return new SimpleGrantedAuthority(roleName);
+                })
                 .collect(Collectors.toList());
 
         return new User(usuario.getUsername(), usuario.getPassword(), authorities);
