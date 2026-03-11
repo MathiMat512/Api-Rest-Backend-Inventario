@@ -2,6 +2,6 @@ import React from 'react'
 
 export default function Inicio() {
   return (
-    <div>Inicio</div>
+    <div>ESTO ES INICIO</div>
   )
 }
