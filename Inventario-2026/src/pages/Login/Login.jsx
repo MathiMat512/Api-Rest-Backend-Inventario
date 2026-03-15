@@ -1,39 +1,79 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Login() {
   
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { login, user } = useAuth();
+
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
 
   useEffect(() => {
-    // Si ya tiene token, redirigir a inicio
+    // Si ya tiene token o usuario autenticado, redirigir a inicio
     const token = localStorage.getItem('token');
-    if (token) {
+    if (token || user) {
       navigate('/inicio');
     }
-  }, []);
+  }, [user]);
 
-  const error = searchParams.get('error');
-  
-  const iniciarSesion = () => {
-    window.location.href = 'http://localhost:8080/auth/login';
-  }
+  const errorParam = searchParams.get('error');
+
+  const iniciarSesion = async (e) => {
+    e.preventDefault();
+    setError("");
+    setCargando(true);
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || "Credenciales inválidas");
+        setCargando(false);
+        return;
+      }
+
+      // Llamar al login del AuthContext con el token y nombre de usuario
+      login(data.token, data.username);
+
+      // Redirigir a inicio
+      navigate("/inicio");
+
+    } catch (err) {
+      console.error("Error al iniciar sesión:", err);
+      setError("Error de conexión con el servidor");
+    } finally {
+      setCargando(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-900 via-blue-700 to-sky-400">
+    <div className="min-vh-100 d-flex align-items-center justify-content-center bg-primary bg-gradient">
 
-      <div className="bg-white shadow-2xl rounded-2xl p-10 w-full max-w-md">
+      <div className="bg-white shadow-lg rounded-4 p-5 w-100" style={{ maxWidth: '28rem' }}>
 
         {/* Icono Usuario */}
-        <div className="flex justify-center mb-4">
-          <div className="bg-blue-900 p-4 rounded-full">
+        <div className="d-flex justify-content-center mb-4">
+          <div className="bg-primary p-3 rounded-circle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="w-8 h-8 text-white"
+              width="32"
+              height="32"
               fill="none"
               viewBox="0 0 24 24"
-              stroke="currentColor"
+              stroke="white"
               strokeWidth="2"
             >
               <path
@@ -45,46 +85,59 @@ export default function Login() {
           </div>
         </div>
 
-        <h1 className="text-3xl font-bold text-center text-blue-900">
+        <h1 className="fs-3 fw-bold text-center text-primary">
           Bienvenido
         </h1>
 
-        <p className="text-center text-gray-500 mb-6">
+        <p className="text-center text-secondary mb-4">
           Iniciar sesión
         </p>
 
-        <form className="space-y-4">
+        {/* Mensajes de error */}
+        {(error || errorParam) && (
+          <div className="alert alert-danger text-center py-2 small">
+            {error || errorParam}
+          </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+        <form onSubmit={iniciarSesion}>
+
+          <div className="mb-3">
+            <label className="form-label small fw-medium">
               Nombre de usuario
             </label>
 
             <input
               type="text"
               placeholder="Ingrese su usuario"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none transition"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="form-control"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+          <div className="mb-3">
+            <label className="form-label small fw-medium">
               Contraseña
             </label>
 
             <input
               type="password"
               placeholder="Ingrese su contraseña"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-400 focus:outline-none transition"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="form-control"
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-900 hover:bg-blue-800 text-white font-semibold py-2 rounded-lg transition duration-300"
-            onClick={iniciarSesion}
+            disabled={cargando}
+            className="btn btn-primary w-100 fw-semibold py-2"
           >
-            Iniciar sesión
+            {cargando ? "Iniciando sesión..." : "Iniciar sesión"}
           </button>
 
         </form>

@@ -10,6 +10,7 @@ export default function Layout() {
   <div style={{ display: 'flex', minHeight: '100vh' }}>
     {!isLoginPage && <Sidebar />}
     <main
+      className={!isLoginPage ? 'layout-main-content' : ''}
       style={{ flex: 1, padding: isLoginPage ? 0 : '1rem',}}>
       <Outlet />
     </main>
